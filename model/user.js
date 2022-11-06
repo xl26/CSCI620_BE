@@ -20,9 +20,6 @@ const userSchema = new Schema({
     password: {
         type : String,
         require: true
-    },
-    token: {
-        type: String
     }
 });
 
