@@ -34,13 +34,13 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: false
 }));
 
-app.use("/", (req, res, next) => {
+app.use("/api", (req, res, next) => {
   try {
     if (req.path == "/login" || req.path == "/register" || req.path == "/") {
       next();
     } else {
       /* decode jwt token if authorized*/
-      jwt.verify(req.headers.token, 'shhhhh11111', function (err, decoded) {
+      jwt.verify(req.headers.token, 'project1620', function (err, decoded) {
         if (decoded && decoded.user) {
           req.user = decoded;
           next();
@@ -60,7 +60,7 @@ app.use("/", (req, res, next) => {
   }
 })
 
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.status(200).json({
     status: true,
     title: 'Apis'
@@ -68,7 +68,7 @@ app.get("/", (req, res) => {
 });
 
 //firebase api calls
-app.post("/addPicture", upload.single("pic"), async (req, res) => {
+app.post("/api/addPicture", upload.single("pic"), async (req, res) => {
   const file = req.file;
   const imageRef = ref(storage, file.originalname);
   const metatype = { contentType: file.mimetype, name: file.originalname };
@@ -82,13 +82,11 @@ app.post("/addPicture", upload.single("pic"), async (req, res) => {
 });
 
 /* login api */
-app.post("/login", (req, res) => {
+app.post("/api/login", (req, res) => {
   try {
-    console.log(req.body.email);
     if (req.body && req.body.email && req.body.password) {
       user.find({ email: req.body.email }, (err, data) => {
         if (data.length > 0) {
-          console.log(JSON.stringify(data));
           if (bcrypt.compareSync(data[0].password, req.body.password)) {
             checkUserAndGenerateToken(data[0], req, res);
           } else {
@@ -122,21 +120,19 @@ app.post("/login", (req, res) => {
 });
 
 /* register api */
-app.post("/register", (req, res) => {
+app.post("/api/register", (req, res) => {
   try {
     if (req.body && req.body.email && req.body.password) {
 
       user.find({ email: req.body.email }, (err, data) => {
 
         if (data.length == 0) {
-          console.log(JSON.stringify(req.body));
           let User = new user({
             F_name: req.body.F_name,
             L_name: req.body.L_name,
             email: req.body.email,
             password: req.body.password
           });
-          console.log(User);
           User.save((err, data) => {
             if (err) {
               res.status(400).json({
@@ -153,7 +149,7 @@ app.post("/register", (req, res) => {
 
         } else {
           res.status(400).json({
-            errorMessage: `UserName ${req.body.email} Already Exist!`,
+            errorMessage: `UserName ${req.body.email} Already Exists!!`,
             status: false
           });
         }
@@ -175,7 +171,7 @@ app.post("/register", (req, res) => {
 });
 
 function checkUserAndGenerateToken(data, req, res) {
-  jwt.sign({ user: data.email, id: data._id }, 'shhhhh11111', { expiresIn: '1d' }, (err, token) => {
+  jwt.sign({ user: data.email, id: data._id }, 'project1620', { expiresIn: '1d' }, (err, token) => {
     if (err) {
       res.status(400).json({
         status: false,
@@ -192,13 +188,11 @@ function checkUserAndGenerateToken(data, req, res) {
   });
 }
 
-/* Api to add Product */
-app.post("/add-product", upload.any(), (req, res) => {
+//pi to add inventory/product
+app.post("/api/add", upload.any(), (req, res) => {
   try {
-    console.log(req.body.date_aq);
     if (req.body && req.body.name && req.body.desc && req.body.approx_v &&
       req.body.ins_v && req.body.date_aq && req.body.image) {
-      console.log(JSON.stringify(req.body, 5, null))
       let newProduct = new product();
       newProduct.name = req.body.name;
       newProduct.desc = req.body.desc;
@@ -216,14 +210,14 @@ app.post("/add-product", upload.any(), (req, res) => {
         } else {
           res.status(200).json({
             status: true,
-            title: 'Product Added successfully.'
+            title: 'Inventory Added successfully.'
           });
         }
       });
 
     } else {
       res.status(400).json({
-        errorMessage: 'Add proper parameter first!',
+        errorMessage: 'Some fields are missing!!',
         status: false
       });
     }
@@ -235,8 +229,8 @@ app.post("/add-product", upload.any(), (req, res) => {
   }
 });
 
-/* Api to update Product */
-app.post("/update-product", upload.any(), (req, res) => {
+//Api to update Product
+app.post("/api/update", upload.any(), (req, res) => {
   try {
     if (req.body && req.body.name && req.body.desc && req.body.approx_v &&
       req.body.id && req.body.ins_v && req.body.date_aq) {
@@ -261,7 +255,7 @@ app.post("/update-product", upload.any(), (req, res) => {
           } else {
             res.status(200).json({
               status: true,
-              title: 'Product updated.'
+              title: 'Inventory updated.'
             });
           }
         });
@@ -270,7 +264,7 @@ app.post("/update-product", upload.any(), (req, res) => {
 
     } else {
       res.status(400).json({
-        errorMessage: 'Add proper parameter first!',
+        errorMessage: 'Some fields are missing!!',
         status: false
       });
     }
@@ -283,14 +277,14 @@ app.post("/update-product", upload.any(), (req, res) => {
 });
 
 /* Api to delete Product */
-app.post("/delete-product", (req, res) => {
+app.post("/api/delete", (req, res) => {
   try {
     if (req.body && req.body.id) {
       product.findByIdAndUpdate(req.body.id, { is_delete: true }, { new: true }, (err, data) => {
         if (data.is_delete) {
           res.status(200).json({
             status: true,
-            title: 'Product deleted.'
+            title: 'Inventory deleted.'
           });
         } else {
           res.status(400).json({
@@ -314,7 +308,7 @@ app.post("/delete-product", (req, res) => {
 });
 
 /*Api to get and search product with pagination and search by name*/
-app.get("/get-product", (req, res) => {
+app.get("/api/get-product", (req, res) => {
   try {
     var query = {};
     query["$and"] = [];
@@ -334,11 +328,10 @@ app.get("/get-product", (req, res) => {
       .then((data) => {
         product.find(query).count()
           .then((count) => {
-            console.log(data)
             if (data && data.length > 0) {
               res.status(200).json({
                 status: true,
-                title: 'Product retrived.',
+                title: 'Inventory retrived.',
                 products: data,
                 current_page: page,
                 total: count,
@@ -346,7 +339,7 @@ app.get("/get-product", (req, res) => {
               });
             } else {
               res.status(400).json({
-                errorMessage: 'There is no product!',
+                errorMessage: 'There is no Inventory for the user!',
                 status: false
               });
             }
