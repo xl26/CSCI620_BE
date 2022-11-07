@@ -2,12 +2,12 @@
 Project 1 Backend
 # Project Title
 
-A nice project with a nice description
+This project works as the backend for Project 1. Written in node-express.
 
 ---
 ## Requirements
 
-For development, you will only need Node.js and a node global package, Yarn, installed in your environement.
+For development, you will only need Node.js and a node global package, installed in your environement.
 
 ### Node
 - #### Node installation on Windows
