@@ -7,7 +7,7 @@ productSchema = new Schema( {
 	approx_v: Number,
 	image: String,
 	ins_v: Number,
-	user_id: Schema.ObjectId,
+	category: String,
 	is_delete: { type: Boolean, default: false },
 	date_aq : { type : Date, default: Date.now }
 }),
