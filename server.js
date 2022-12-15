@@ -156,7 +156,8 @@ app.post("/api/register", (req, res) => {
             F_name: req.body.F_name,
             L_name: req.body.L_name,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            role: req.body.role
           });
           User.save((err, data) => {
             if (err) {
@@ -763,6 +764,6 @@ app.get("/api/get-inventory", (req, res) => {
   }
 
 });
-app.listen(2000, () => {
+app.listen(5000, () => {
   console.log("Server is Runing On port 2000");
 });
