@@ -7,7 +7,7 @@ var multer = require('multer'),
   bodyParser = require('body-parser'),
   path = require('path');
 var mongoose = require("mongoose");
-mongoose.connect("mongodb+srv://smishra4:sHDP9aIkqokUqmf7@cluster0.rq6orye.mongodb.net/Project1?retryWrites=true&w=majority", {
+mongoose.connect("mongodb+srv://<user>:,<password>@cluster0.rq6orye.mongodb.net/Project1?retryWrites=true&w=majority", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
